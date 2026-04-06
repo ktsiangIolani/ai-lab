@@ -33,18 +33,10 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy Flask application
-COPY app.py .
-COPY chatbot.py .
-COPY add_chatbot.py .
-
-# Create chatbots directory
-RUN mkdir -p chatbots
+COPY backend/app.py app.py
 
 # Copy built React app from previous stage
 COPY --from=react-build /app/build ./build
-
-# Copy sample chatbots
-COPY chatbots/ ./chatbots/
 
 # Create non-root user
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
@@ -55,7 +47,7 @@ EXPOSE 5001
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:5001/api/chatbots || exit 1
+    CMD curl -f http://localhost:5001/api/student-chat || exit 1
 
 # Run the application
 CMD ["python", "app.py"]
